@@ -7,10 +7,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Node.js 22.17.1
 ENV NODE_VERSION=22.17.1
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
- && apt-get install -y --no-install-recommends nodejs \
- && npm install -g "node@${NODE_VERSION}" \
- && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSLO "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" \
+ && mkdir -p /opt/node-v${NODE_VERSION} \
+ && tar -xJf "node-v${NODE_VERSION}-linux-x64.tar.xz" -C /opt/node-v${NODE_VERSION} --strip-components=1 \
+ && rm "node-v${NODE_VERSION}-linux-x64.tar.xz"
+# Put this Node first on PATH (avoids touching existing /usr/local/bin or /opt/conda/bin)
+ENV PATH="/opt/node-v${NODE_VERSION}/bin:${PATH}"
 
 
 # Preinstall code-server
