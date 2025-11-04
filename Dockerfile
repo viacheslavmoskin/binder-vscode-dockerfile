@@ -16,7 +16,7 @@ ENV PATH="/opt/node-v${NODE_VERSION}/bin:${PATH}"
 
 # npm 11.6.2
 ENV NPM_VERSION=11.6.2
-npm install -g npm@11.6.2
+RUN npm install -g npm@${NPM_VERSION}
 
 # Preinstall code-server
 ENV CODE_SERVER_VERSION=4.89.1
