@@ -1,39 +1,33 @@
-# === Binder-friendly image with Python, Node.js 20, and VS Code UI ===
 FROM jupyter/minimal-notebook:python-3.11
 
-# Become root to install system deps
 USER root
-
-# Useful build tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl git build-essential ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
-# --- Install Node.js 20 (NodeSource) ---
+# Node.js 20
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
  && apt-get install -y --no-install-recommends nodejs \
  && rm -rf /var/lib/apt/lists/*
 
-# Back to the default notebook user
+# Preinstall code-server
+ENV CODE_SERVER_VERSION=4.89.1
+RUN curl -fsSL -o /tmp/code-server.tgz \
+      "https://github.com/coder/code-server/releases/download/v${CODE_SERVER_VERSION}/code-server-${CODE_SERVER_VERSION}-linux-amd64.tar.gz" \
+ && tar -xzf /tmp/code-server.tgz -C /opt \
+ && ln -s "/opt/code-server-${CODE_SERVER_VERSION}-linux-amd64/bin/code-server" /usr/local/bin/code-server \
+ && rm -f /tmp/code-server.tgz
+
 USER ${NB_UID}
 
-# --- Python tooling + JupyterLab LSP ---
+# JupyterLab + proxy integration
 RUN pip install --no-cache-dir \
-      jupyterlab>=4 \
-      jupyterlab-lsp \
-      python-lsp-server[all] \
-      ipywidgets
+      "jupyter-server-proxy>=4,<5" \
+      jupyter-codeserver-proxy \
+      jupyterlab>=4 jupyterlab-lsp python-lsp-server[all] ipywidgets
 
-# --- VS Code UI inside Jupyter ---
-# jupyter-server-proxy + OpenVSCode Server integration
-RUN pip install --no-cache-dir \
-      jupyter-server-proxy \
-      jupyter-vscode-proxy
+# Explicitly enable (helps on Binder)
+RUN jupyter server extension enable --py jupyter_server_proxy --sys-prefix
 
-# (Optional) common DS libs — comment out if you want it lean
-# RUN pip install --no-cache-dir numpy pandas matplotlib scipy scikit-learn
-
-# Verify versions in Binder build logs
-RUN python --version && jupyter lab --version && node -v && npm -v
-
-# Keep base entrypoint/CMD (Binder expects Jupyter to start)
+# Sanity in build logs
+RUN python --version && jupyter lab --version && code-server --version && node -v && npm -v
