@@ -16,7 +16,8 @@ ENV PATH="/opt/node-v${NODE_VERSION}/bin:${PATH}"
 
 # npm 11.6.2
 ENV NPM_VERSION=11.6.2
-RUN npm install -g npm@${NPM_VERSION}
+RUN npm install -g npm@${NPM_VERSION} \
+ && chown -R 1000:100 "/home/jovyan/.npm"
 
 # Preinstall code-server
 ENV CODE_SERVER_VERSION=4.89.1
