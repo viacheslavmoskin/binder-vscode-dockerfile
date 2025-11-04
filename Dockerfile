@@ -5,10 +5,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl git build-essential ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
-# Node.js 20
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+# Node.js 22.17.1
+ENV NODE_VERSION=22.17.1
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
  && apt-get install -y --no-install-recommends nodejs \
+ && npm install -g "node@${NODE_VERSION}" \
  && rm -rf /var/lib/apt/lists/*
+
 
 # Preinstall code-server
 ENV CODE_SERVER_VERSION=4.89.1
