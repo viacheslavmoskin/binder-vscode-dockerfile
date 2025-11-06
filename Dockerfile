@@ -41,8 +41,7 @@ RUN jupyter server extension enable --py jupyter_server_proxy --sys-prefix
 # Sanity in build logs
 RUN python --version && jupyter lab --version && code-server --version && node -v && npm -v
 
-RUN echo "export PATH=/opt/node-v${NODE_VERSION}/bin:${PATH}" >> .bashrc \
- && echo "export PATH=$PATH:~/shared/tools" >> .bashrc
+RUN echo "export PATH=$PATH:~/shared/tools" >> .bashrc
 
 # Export KUBECONFIG variable to change the path to kubeconfig file
 RUN echo "export KUBECONFIG=~/private/.kube/config" >> .bashrc
