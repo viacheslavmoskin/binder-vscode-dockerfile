@@ -41,20 +41,11 @@ RUN jupyter server extension enable --py jupyter_server_proxy --sys-prefix
 # Sanity in build logs
 RUN python --version && jupyter lab --version && code-server --version && node -v && npm -v
 
-# Create work directory and switch into it
-RUN export CODE_WORKINGDIR=./work \
- && echo "export CODE_WORKINGDIR=${CODE_WORKINGDIR}"       >> .bashrc
-
-# Add additional path for tools
-RUN export PATH=$PATH:~/shared/tools \
+RUN echo "/opt/node-v${NODE_VERSION}/bin:${PATH}" >> .bashrc \
  && echo "export PATH=$PATH:~/shared/tools" >> .bashrc
 
-RUN export PATH="/opt/node-v${NODE_VERSION}/bin:${PATH}" \
- && echo "/opt/node-v${NODE_VERSION}/bin:${PATH}" >> .bashrc
-
 # Export KUBECONFIG variable to change the path to kubeconfig file
-RUN export KUBECONFIG=~/private/.kube/config \
- && echo "export KUBECONFIG=~/private/.kube/config" >> .bashrc
+RUN echo "export KUBECONFIG=~/private/.kube/config" >> .bashrc
 
 # Install Azure CLI
 RUN pip install azure-cli
