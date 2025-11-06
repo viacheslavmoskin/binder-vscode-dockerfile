@@ -42,8 +42,7 @@ RUN jupyter server extension enable --py jupyter_server_proxy --sys-prefix
 RUN python --version && jupyter lab --version && code-server --version && node -v && npm -v
 
 # Create work directory and switch into it
-RUN mkdir work \
- && export CODE_WORKINGDIR=./work \
+RUN export CODE_WORKINGDIR=./work \
  && echo "export CODE_WORKINGDIR=${CODE_WORKINGDIR}"       >> .bashrc
 
 # Add additional path for tools
